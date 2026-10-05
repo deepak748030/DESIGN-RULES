@@ -1216,3 +1216,815 @@
 ### Text Gradients
 - Text pe gradient lagate waqt **readability maintain** rakho.
 - **Sirf headlines pe** — statement style me.
+
+---
+
+## 📐 SafeAreaView — Har Screen Ka Pehla Layer
+
+> Real app me **koi bhi content SafeAreaView ke bahar nahi hona chahiye** — notch, status bar, home indicator sab content ko khata hai.
+
+### Rule 1: SafeAreaView Hamesha Root Pe
+- **Har screen ka sabse bahar ka wrapper SafeAreaView hona chahiye.**
+- ❌ Content ko direct `View` me mat daalo — **notch ke peeche chhup jayega.**
+- ✅ `SafeAreaView style={{ flex: 1 }}` — **har screen ka default starting point.**
+
+### Rule 2: Edges Define Karo
+- **`edges={['top']}`** sirf top safe area chahiye to (status bar + notch protection).
+- **`edges={['bottom']}`** sirf bottom chahiye (home indicator area on iPhone X+).
+- **`edges={['left', 'right']}`** landscape mode me side notch/protection.
+- Default `edges={['top', 'bottom']}` — **zyadatar screens ke liye ye hi chahiye.**
+
+### Rule 3: Tab Screens Me Bottom Mat Lo
+- Bottom tab navigator **khud bottom safe area handle karta hai** — screen ko `edges={['top']}` do.
+- ❌ Dono taraf safe area = **tab bar ke upar extra gap** — content beech me atak jayega.
+
+### Rule 4: Full-Screen Content (Video/Map)
+- Full-screen video ya map me **SafeAreaView hatao** — content edge-to-edge chahiye.
+- **Overlay controls** ko khud padding do — `Platform.OS === 'ios' ? 44 : 24` top padding.
+
+### Rule 5: Modal Me Safe Area Alag Hai
+- **Bottom sheet modals** ko sirf bottom edge chahiye — top content khud handle kare.
+- **Full-screen modals** ko dono edges chahiye — normal screen jaisa.
+
+---
+
+## 📏 Padding & Spacing System — Consistent Spacing Har Jagah
+
+> Real apps me **spacing ek system hai**, random numbers nahi. Ye rules follow karo:
+
+### Left/Right Horizontal Padding = 8px Default
+- **Har screen ka left/right padding minimum 8px** hona chahiye — content screen ke edge se chipke nahi hona chahiye.
+- ✅ `paddingHorizontal: 8` — **standard baseline.**
+- Cards, list items, sections — sab me **8px side padding consistent.**
+- ❌ `paddingHorizontal: 0` — **content edge-to-edge dekhne me sasta lagta hai.**
+
+### Content Sections Ke Liye 16px
+- **Major content sections** (cards, forms, profile sections) ke liye `paddingHorizontal: 16`.
+- **Sub-sections** ke andar `paddingHorizontal: 8` — **nested padding hierarchy.**
+
+### Gap Spacing = 8px Between Items
+- **List items ke beech gap = 8px** — na zyada na kam.
+- ✅ `gap: 8` ya `marginVertical: 8` — **consistent breathing room.**
+- **Header se content ke beech = 16px** — zyada gap lagta hai section separation.
+- **Footer se content ke beech = 16px**.
+
+### Spacing Scale (4px Base Unit)
+- **4px** — tight spacing (icon se text ke beech, badge adjustments)
+- **8px** — default gap (list items, horizontal padding, inline elements)
+- **12px** — medium gap (card internal padding, button padding)
+- **16px** — section spacing (header to content, card to card)
+- **24px** — large section gap (between major sections)
+- **32px** — screen sections (top margin, bottom safe area)
+- **48px–64px** — hero/empty state spacing
+
+### Negative: Kab Gap Mat Use Karo
+- ❌ **List data me gap mat use karo** — **divider lines use karo** (neeche dekho).
+- ❌ **Same-level elements ke beech uneven gaps** — visual rhythm toot-ta hai.
+- ❌ **Gap aur padding mix mat karo** — ek parent padding do, children ko gap se space karo.
+
+---
+
+## ➖ List Dividers — Gap Ki Jagah Lines Use Karo
+
+> **Jab data list ho (contacts, messages, settings, orders) — gap ki jagah divider lines use karo.** Gap list items ko disconnected banata hai; line unhe ek **connected list** banata hai.
+
+### Rule 1: Hairline Divider = 1px, Subtle Color
+- ✅ `height: 1, backgroundColor: 'rgba(0,0,0,0.08)'` — **light mode.**
+- ✅ `height: 1, backgroundColor: 'rgba(255,255,255,0.08)'` — **dark mode.**
+- ❌ **2px ya bold divider = overkill** — line subtle honi chahiye, loudest cheez nahi.
+- ❌ **Har jagah same divider color** — dark mode me alag, light mode me alag.
+
+### Rule 2: Divider Left Padding = Content Se Match
+- Divider ka **left edge content ke left edge se aligned** hona chahiye.
+- ✅ `marginLeft: 56` (avatar width 40 + 16px padding) — **avatar ke baad start ho.**
+- ❌ Full-width divider jab content inset hai — **line content se disconnected lagti hai.**
+- **Inset divider** = jab content me left icon/avatar ho.
+- **Full-width divider** = jab content edge-to-edge ho (settings list bina icon).
+
+### Rule 3: Last Item Pe Divider Nahi
+- ❌ Last item ke baad divider — **list ka end confuse hota hai next section se.**
+- ✅ `n - 1` dividers for `n` items — **last item clean end.**
+
+### Rule 4: Group Headers Ke Baad Divider Nahi
+- Section header ("Recent Orders", "Account Settings") ke baad **divider mat lagao** — header khud separator hai.
+- ✅ Divider **sirf items ke beech**, **group boundaries ke baad nahi.**
+
+### Rule 5: Divider Kahan Gap Se Better Hai
+| Scenario | Gap ❌ | Divider ✅ |
+|---|---|---|
+| Contact list | disconnected feel | connected list |
+| Settings/options | airy but loose | scannable rows |
+| Order history | items float apart | timeline feel |
+| Chat list | gaps break grouping | clean separation |
+| Card grid/cards | ✅ gap works here | ❌ divider odd lagta hai |
+
+### Rule 6: Divider Me Animated Transitions
+- Swipe-to-delete karne pe **divider smoothly shrink** ho — **hard cut ❌.**
+- New item insert hone pe **divider fade-in** — **pop-in broken lagta hai.**
+
+---
+
+## 🎨 Icons — Custom-Generated, Premium Quality
+
+> ❌ **Simple FontAwesome/MaterialIcons se kaam nahi chalega** — real apps me **custom crafted icons** hote hain jo brand se match karte hain. Library icons **generic lagte hain** aur product ko **template jaisa banate hain.**
+
+### Rule 1: Custom SVG Icons Generate Karo
+- **Har icon ko SVG me manually craft karo** — perfect pixel alignment, consistent stroke width.
+- ✅ **24×24 viewBox** standard — responsive scaling ke liye.
+- ✅ **2px stroke width** — clean, modern look.
+- ✅ **stroke-linecap: round**, **stroke-linejoin: round** — soft edges.
+- ❌ `fill`-based icons **outdated lagte hain** — **outline/stroke icons modern hain.**
+
+### Rule 2: Consistent Icon Grid
+- Har icon **24×24 grid** me hona chahiye — **2px padding** inside (20×20 live area).
+- **Optical alignment** > mathematical alignment — circle ko 1px bada karo taaki square jaisa lage.
+- **Har icon me same visual weight** — ek patla, ek mota nahi hona chahiye.
+
+### Rule 3: Icon Styles Jo Real Apps Use Karti Hain
+
+#### Outline (Default)
+```svg
+<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+```
+- **Subtle, reading mode** — navigation, secondary actions.
+
+#### Filled (Active/Selected State)
+```svg
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="currentColor"/>
+```
+- **Bold, active state** — selected tab, favorited item.
+
+#### Duotone (Two-Tone Visual Hierarchy)
+```svg
+<path d="..." fill="currentColor" opacity="0.15"/>
+<path d="..." stroke="currentColor" stroke-width="2"/>
+```
+- **Depth + hierarchy** — ek shape background me, ek foreground me.
+
+#### Gradient Fill (Premium Feel)
+```svg
+<linearGradient id="grad"><stop offset="0%" stop-color="#6366F1"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient>
+<path d="..." fill="url(#grad)"/>
+```
+- **Feature icons, achievements, rewards** — premium feel.
+
+### Rule 4: Icon Sizes — 4 Sizes, Har Jagah Consistent
+| Size | Use Case | CSS |
+|---|---|---|
+| **16px** | Inline text ke saath, badges, tags | `width: 16; height: 16` |
+| **20px** | Buttons ke andar, input fields, list items | `width: 20; height: 20` |
+| **24px** | Navigation tabs, standalone icons, toolbar | `width: 24; height: 24` |
+| **32px** | Empty states, feature highlights, onboarding | `width: 32; height: 32` |
+
+### Rule 5: Essential App Icons — Ye Har Real App Me Hote Hain
+
+#### Navigation & Actions
+- **Home** — house outline with chimney detail
+- **Search** — magnifying glass with subtle depth (not just a circle + line)
+- **Bell/Notification** — bell with small dot indicator capability
+- **User/Profile** — person silhouette with subtle shoulders
+- **Settings/Gear** — gear with 6 teeth, not 8 (cleaner)
+- **Back Arrow** — chevron-left with proper curve, not straight line
+- **Close/X** — rotated 45° cross, not just two lines
+- **Menu/Hamburger** — 3 lines with rounded caps, 16px total height
+
+#### Content & Media
+- **Heart/Favorite** — organic shape, not geometric; filled state me proper red
+- **Star/Rating** — 5-point star with proper inner radius; partial fill support
+- **Bookmark** — bookmark with folded bottom corner detail
+- **Share** — iOS style (box + arrow up) ya Android style (3 dots connected)
+- **Camera** — camera body + lens circle + flash indicator
+- **Image/Photo** — landscape frame with mountain + sun
+- **Play** — triangle with proper proportions (not equilateral — wider base)
+- **Pause** — two vertical bars, equal width, proper spacing
+
+#### Communication
+- **Chat/Bubble** — speech bubble with rounded tail
+- **Mail/Envelope** — envelope with V-fold lines
+- **Phone** — phone with subtle curve (not just rectangle)
+- **Send/Paper Plane** — folded paper plane, not just arrow
+- **Attachment/Paperclip** — curved paperclip with proper loops
+
+#### Status & Feedback
+- **Check/Circle** — checkmark inside circle (success)
+- **Warning/Triangle** — triangle with exclamation (warning)
+- **Error/X-Circle** — X inside circle (error)
+- **Info/Circle-i** — i inside circle (info)
+- **Loading/Spinner** — circular arc, animated rotation
+- **Download** — arrow down + horizontal line (tray)
+- **Upload** — arrow up + horizontal line (tray)
+- **Refresh** — two curved arrows forming circle
+
+#### E-Commerce Specific
+- **Cart/Bag** — shopping bag with handles
+- **Tag/Price** — price tag with string
+- **Wallet** — wallet with card slot detail
+- **Delivery/Truck** — delivery truck side view
+- **Filter/Sliders** — 3 horizontal sliders at different positions
+- **Sort** — 3 horizontal lines decreasing in width
+- **Grid View** — 2×2 grid of squares
+- **List View** — 3 rows with circle + line
+
+### Rule 6: Icon Colors — Semantic, Not Decorative
+- ✅ `color: theme.colors.text.secondary` — **default icon color = secondary text.**
+- ✅ `color: theme.colors.primary` — **active/selected state.**
+- ✅ `color: theme.colors.error` — **destructive action icons.**
+- ❌ **Har icon alag color** — rainbow effect, koi meaning nahi.
+- ❌ **Decorative colors** (pink camera, blue search) — **icons functional hain, decoration nahi.**
+
+### Rule 7: Icon + Text Pairing
+- **Icon aur text ke beech 8px gap** — na zyada na kam.
+- **Icon size = text line-height ka ~75%** — icon text se chhota hona chahiye.
+- **Vertical center alignment** — icon aur text ka **optical center** match hona chahiye.
+- ✅ `alignItems: 'center', gap: 8` — **consistent icon-text pairs.**
+
+### Rule 8: Animated Icons — Micro-Interactions
+- **Tab switch** pe icon **outline → filled morph** (200ms ease-out).
+- **Like/Heart** pe icon **scale bounce** (1.0 → 1.3 → 1.0, 300ms).
+- **Notification bell** pe **swing animation** (rotate ±15°, 2 cycles, 400ms).
+- **Download** pe **arrow bounce down** (translateY +4px → 0, 200ms).
+- **Error shake** — icon **translateX ±4px**, 3 cycles, 300ms.
+- ❌ **Har icon pe animation** — **sirf meaningful interactions pe.**
+
+---
+
+## 📱 Real App Screen Architecture
+
+> Real apps me **har screen ka ek consistent structure** hota hai. Ye template follow karo:
+
+### Screen Anatomy
+```
+┌─────────────────────────┐
+│     SafeAreaView (top)  │  ← Status bar + notch protection
+├─────────────────────────┤
+│     Header/NavBar       │  ← Screen title, back button, actions
+│     paddingHorizontal: 16│
+├─────────────────────────┤
+│                         │
+│     Content Area        │  ← Main content with paddingHorizontal: 8
+│     flex: 1             │
+│                         │
+├─────────────────────────┤
+│     Footer/Tab Bar      │  ← Bottom actions or tab navigation
+│     SafeAreaView (bottom)│
+└─────────────────────────┘
+```
+
+### Header Component Rules
+- **Height: 56px** (Android) / **44px + safe area** (iOS).
+- **Left: Back button** (if not root screen) — **24px icon, 44px hit area.**
+- **Center: Title** — **single line, semibold, centered.**
+- **Right: Action icons** — max 2 icons with **8px gap** between them.
+- **Shadow/border-bottom**: `borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.06)'`.
+- ❌ **Title left-aligned jab center me space hai** — **centered feels premium.**
+
+### Content Area Rules
+- **`flex: 1`** — content area baaki space le.
+- **`paddingHorizontal: 8`** — baseline side padding.
+- **Keyboard-aware**: `KeyboardAvoidingView` wrap karo jab input fields ho.
+- **Scrollable content**: `ScrollView` ya `FlatList` with `contentContainerStyle={{ paddingBottom: 24 }}`.
+
+### Bottom Actions / Floating Buttons
+- **FAB (Floating Action Button)**: **56×56px, right-bottom, 16px margin** from edges.
+- **Bottom bar**: **height 56px + safe area**, with `paddingHorizontal: 8`.
+- **Sticky footer** (like "Place Order" button): `position: 'absolute', bottom: 0`.
+
+---
+
+## 📋 Real List Patterns — Contacts, Orders, Settings
+
+> Real apps me lists **data-rich** hote hain — sirf title nahi, **subtitle, metadata, actions, status** sab hota hai.
+
+### Contact/User List Item
+```
+┌──────────────────────────────────────────┐ paddingHorizontal: 8
+│ ┌──────┐                                 │
+│ │Avatar│  Name (Semibold 16px)           │ ← 8px gap avatar → text
+│ │ 40px │  Last message preview (14px, muted)│
+│ └──────┘                                 │
+│──────────────────────────────────────────│ ← 1px divider, marginLeft: 56
+│ ┌──────┐                                 │
+│ │Avatar│  Name (Semibold 16px)           │
+│ │ 40px │  Last message preview (14px, muted)│
+│ └──────┘                                 │
+└──────────────────────────────────────────┘
+```
+
+### Settings/Options List Item
+```
+┌──────────────────────────────────────────┐ paddingHorizontal: 8
+│ [Icon 24px]  Setting Name        [>]     │ ← 8px gap icon → text
+│──────────────────────────────────────────│ ← 1px divider, marginLeft: 48
+│ [Icon 24px]  Setting Name        [>]     │
+│──────────────────────────────────────────│ ← 1px divider, marginLeft: 48
+│ [Icon 24px]  Setting Name        [Toggle]│
+└──────────────────────────────────────────┘
+```
+
+### Order/Transaction List Item
+```
+┌──────────────────────────────────────────┐ paddingHorizontal: 8
+│ Order #28491              ₹2,499         │ ← Title left, amount right
+│ 3 items • 12 Oct 2025     [Delivered]    │ ← Metadata left, status badge right
+│──────────────────────────────────────────│ ← 1px divider
+│ Order #28490              ₹899           │
+│ 1 item • 10 Oct 2025     [In Transit]    │
+└──────────────────────────────────────────┘
+```
+
+### Notification List Item
+```
+┌──────────────────────────────────────────┐ paddingHorizontal: 8
+│ ●  [Icon]  Notification Title    2m ago  │ ← Bold dot = unread, relative time
+│──────────────────────────────────────────│ ← 1px divider
+│    [Icon]  Notification Title    1h ago  │ ← No dot = read
+│──────────────────────────────────────────│ ← 1px divider
+│ ●  [Icon]  Notification Title    3h ago  │
+└──────────────────────────────────────────┘
+```
+
+---
+
+## 🃏 Real Card Patterns
+
+> Cards **containers** hain — content-rich, **not just title + image.**
+
+### Product Card
+```
+┌─────────────────────┐ borderRadius: 12
+│ ┌─────────────────┐ │
+│ │                 │ │ ← Image, borderTopRadius: 12
+│ │    [Product     │ │
+│ │     Image]      │ │
+│ │                 │ │
+│ └─────────────────┘ │
+│                     │ padding: 12
+│ Product Name        │ fontSize: 14, fontWeight: 600
+│ Brand Name          │ fontSize: 12, color: muted
+│                     │
+│ ₹1,299  ₹2,499     │ Price: bold + strikethrough old
+│ ★★★★☆ (128)       │ Rating: star icons + count
+│                     │
+│ [Add to Cart]       │ Button: fullWidth, height: 40
+└─────────────────────┘
+```
+
+### Profile Card
+```
+┌─────────────────────────────┐ borderRadius: 12, padding: 16
+│  ┌────────┐                 │
+│  │Avatar  │  Name           │ ← 56px avatar + text
+│  │  56px  │  @username      │
+│  └────────┘  Bio text here  │
+│                             │
+│  ┌────────┬────────┬──────┐ │ ← Stats row
+│  │  1.2k  │  489   │  67  │ │
+│  │ Posts  │  Likes │Saved │ │
+│  └────────┴────────┴──────┘ │
+│                             │
+│  [Follow]  [Message]        │ ← Action buttons, gap: 8
+└─────────────────────────────┘
+```
+
+### Summary/Stats Card
+```
+┌─────────────────────────────┐ borderRadius: 12, padding: 16
+│  [Icon]   Total Revenue     │ ← Icon + Label
+│           ₹2,45,890         │ Large number, tabular-nums
+│           ↑ 12.5% vs last   │ Trend indicator + color
+│                             │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━  │ ← Mini chart/sparkline
+│  Mon  Tue  Wed  Thu  Fri    │
+└─────────────────────────────┘
+```
+
+---
+
+## 🔍 Real Search Implementation
+
+> Search sirf input box nahi hai — **poora experience hai.**
+
+### Search Bar Component
+```
+┌──────────────────────────────────────────┐ paddingHorizontal: 8
+│  🔍  Search products, brands...    [×]  │ ← 40px height, 12px border radius
+│──────────────────────────────────────────│ ← 1px divider
+│                                          │
+│  Recent Searches                         │ ← Section header, semibold
+│  ─────────────────────────────────────── │ ← divider
+│  🕐  wireless headphones                 │ ← Recent item with clock icon
+│  ─────────────────────────────────────── │ ← divider
+│  🕐  running shoes nike                  │
+│  ─────────────────────────────────────── │ ← divider
+│                                          │
+│  Trending                                │ ← Section header
+│  ─────────────────────────────────────── │ ← divider
+│  🔥  iPhone 16 cases                     │ ← Trending with fire icon
+│  ─────────────────────────────────────── │ ← divider
+│  🔥  winter jackets                      │
+└──────────────────────────────────────────┘
+```
+
+### Search Results Count + Active Filters
+- **Results header**: `"248 results for \"wireless headphones\""` — **paddingHorizontal: 8.**
+- **Active filter chips**: horizontal scroll row, **gap: 8**, with **clear all** button.
+- **Sort bar**: `"Sort by: Relevance ▼"` — right-aligned, tappable.
+
+---
+
+## 👤 Real Profile Screen
+
+> Profile screens **content-heavy** hote hain — real app me ye sab hota hai:
+
+### Profile Screen Layout
+```
+┌──────────────────────────────────────────┐ SafeAreaView
+│  ←  Profile                    [⚙️][✏️] │ Header: paddingHorizontal: 16
+├──────────────────────────────────────────┤
+│                                          │
+│            ┌──────────┐                  │
+│            │  Avatar  │                  │ 80px avatar, centered
+│            │   80px   │                  │
+│            └──────────┘                  │
+│                                          │
+│          Deepak Sharma                   │ Name: 20px, semibold, centered
+│          @deepak7480                     │ Username: 14px, muted, centered
+│                                          │
+│    ┌────────┬────────┬────────┐          │ Stats row: gap 16px
+│    │  1.2k  │  489   │  67   │          │
+│    │ Posts  │Followers│Following│         │
+│    └────────┴────────┴────────┘          │
+│                                          │
+│    Full-stack developer & designer       │ Bio: 14px, centered
+│    Building beautiful experiences        │
+│                                          │
+│    [Edit Profile]  [Share Profile]       │ Action buttons, gap: 8
+│                                          │ paddingHorizontal: 16
+├──────────────────────────────────────────┤ ← 8px gap
+│                                          │
+│  ┌──┬──┬──┬──┐                          │ Tab bar: Posts | Saved | Tagged
+│  │○ │○ │○ │○ │                          │ paddingHorizontal: 8
+│  └──┴──┴──┴──┘                          │
+│  ┌──┬──┬──┐                              │ Grid: 3 columns, gap: 2px
+│  │  │  │  │                              │
+│  └──┴──┴──┘                              │
+│  ┌──┬──┬──┐                              │
+│  │  │  │  │                              │
+│  └──┴──┴──┘                              │
+└──────────────────────────────────────────┘
+```
+
+---
+
+## 🏠 Real Home/Dashboard Screen
+
+> Home screen **content-dense** hota hai — real app me ye sab hota hai:
+
+### Home Screen Layout
+```
+┌──────────────────────────────────────────┐ SafeAreaView
+│  Good morning, Deepak!        [🔔][👤]  │ Header: paddingHorizontal: 16
+│──────────────────────────────────────────│ ← divider
+│                                          │
+│  🔍  Search anything...                  │ Search bar: paddingHorizontal: 8
+│                                          │
+│  ┌────────────────────────────────┐      │ Banner/Carousel
+│  │                                │      │ paddingHorizontal: 8
+│  │     [Promotional Banner]       │      │ borderRadius: 12
+│  │     50% OFF — Limited Time     │      │ height: 160
+│  │                                │      │
+│  └────────────────────────────────┘      │
+│      ● ○ ○ ○                             │ Page dots: centered
+│                                          │
+│  Quick Actions              [See all →]  │ Section header: paddingHorizontal: 8
+│  ┌────────────────────────────────┐      │
+│  │ [📦]   [💳]   [📊]   [⚙️]    │      │ Horizontal scroll, gap: 8
+│  │ Orders Wallet Stats Settings   │      │ Each: 72×72, borderRadius: 12
+│  └────────────────────────────────┘      │
+│                                          │
+│  Recent Orders              [See all →]  │ Section header: paddingHorizontal: 8
+│  ┌────────────────────────────────┐      │
+│  │ Order #28491        ₹2,499     │      │ paddingHorizontal: 8
+│  │ 3 items • Delivered ✅         │      │
+│  │────────────────────────────────│      │ ← divider
+│  │ Order #28490          ₹899     │      │
+│  │ 1 item • In Transit 🚚        │      │
+│  │────────────────────────────────│      │ ← divider
+│  │ Order #28485        ₹4,199     │      │
+│  │ 5 items • Processing ⏳        │      │
+│  └────────────────────────────────┘      │
+│                                          │
+│  Recommended For You        [See all →]  │ Section header: paddingHorizontal: 8
+│  ┌──────────┐  ┌──────────┐             │ Horizontal scroll, gap: 8
+│  │ [Image]  │  │ [Image]  │             │ paddingHorizontal: 8
+│  │ Product  │  │ Product  │             │
+│  │ ₹1,299   │  │ ₹899     │             │
+│  └──────────┘  └──────────┘             │
+└──────────────────────────────────────────┘
+│  [🏠]  [🔍]  [🛒]  [👤]               │ Bottom Tab Bar
+└──────────────────────────────────────────┘
+```
+
+---
+
+## 🛒 Real Cart/Checkout Screen
+
+> Cart screens **data-dense + action-oriented** hain:
+
+### Cart Screen Layout
+```
+┌──────────────────────────────────────────┐ SafeAreaView
+│  ←  My Cart (3 items)         [🗑️]     │ Header: paddingHorizontal: 16
+├──────────────────────────────────────────┤
+│                                          │
+│  ┌────────────────────────────────┐      │ paddingHorizontal: 8
+│  │ ┌────────┐                     │      │
+│  │ │        │  Product Name       │      │
+│  │ │ [Img]  │  Size: M, Color: Blk│      │
+│  │ │ 72×72  │                     │      │
+│  │ └────────┘  ₹1,299            │      │
+│  │              [-] 2 [+]         │      │ Quantity stepper
+│  │────────────────────────────────│      │ ← divider
+│  │ ┌────────┐                     │      │
+│  │ │        │  Product Name 2     │      │
+│  │ │ [Img]  │  Size: L, Color: Red│      │
+│  │ │ 72×72  │                     │      │
+│  │ └────────┘  ₹899              │      │
+│  │              [-] 1 [+]         │      │
+│  └────────────────────────────────┘      │
+│                                          │
+│  ┌────────────────────────────────┐      │ paddingHorizontal: 8
+│  │ Apply Coupon            [→]    │      │ Tappable row
+│  │────────────────────────────────│      │ ← divider
+│  │ 🎫  SAVE20 applied      [×]   │      │ Applied coupon
+│  └────────────────────────────────┘      │
+│                                          │
+│  ┌────────────────────────────────┐      │ paddingHorizontal: 8
+│  │ Subtotal               ₹2,198 │      │
+│  │ Discount               -₹399  │      │ Green text
+│  │ Delivery               FREE   │      │ Green text
+│  │────────────────────────────────│      │ ← divider (bold)
+│  │ Total                  ₹1,799 │      │ Bold, 18px
+│  └────────────────────────────────┘      │
+│                                          │
+│  ┌────────────────────────────────┐      │ Sticky bottom
+│  │       [ Place Order ₹1,799 ]  │      │ paddingHorizontal: 8
+│  └────────────────────────────────┘      │ SafeAreaView bottom
+└──────────────────────────────────────────┘
+```
+
+---
+
+## 📊 Real Form Screen — Registration/Checkout
+
+> Forms **field-rich** hote hain — real app me proper grouping aur validation:
+
+### Registration Form Layout
+```
+┌──────────────────────────────────────────┐ SafeAreaView
+│  ←  Create Account             [Skip]   │ Header: paddingHorizontal: 16
+├──────────────────────────────────────────┤
+│                                          │
+│  Personal Details                        │ Section header: paddingHorizontal: 16
+│                                          │
+│  ┌────────────────────────────────┐      │ paddingHorizontal: 8
+│  │ First Name *                   │      │ Label: outside, semibold
+│  │ ┌────────────────────────────┐ │      │
+│  │ │ Deepak                     │ │      │ Input: height 48, borderRadius: 8
+│  │ └────────────────────────────┘ │      │
+│  │                                │      │
+│  │ Last Name *                    │      │
+│  │ ┌────────────────────────────┐ │      │
+│  │ │ Sharma                     │ │      │
+│  │ └────────────────────────────┘ │      │
+│  │                                │      │
+│  │ Email *                        │      │
+│  │ ┌────────────────────────────┐ │      │
+│  │ │ deepak@email.com     ✅   │ │      │ Success state: green check
+│  │ └────────────────────────────┘ │      │
+│  │ ✓ Looks good!                  │      │ Helper text: green
+│  │                                │      │
+│  │ Phone Number *                 │      │
+│  │ ┌────────────────────────────┐ │      │
+│  │ │ 🇮🇳 +91  │ 98765 43210    │ │      │ Country code + number
+│  │ └────────────────────────────┘ │      │
+│  └────────────────────────────────┘      │
+│                                          │
+│  Address                                 │ Section header: paddingHorizontal: 16
+│                                          │
+│  ┌────────────────────────────────┐      │ paddingHorizontal: 8
+│  │ Street Address *               │      │
+│  │ ┌────────────────────────────┐ │      │
+│  │ │ 123 MG Road               │ │      │
+│  │ └────────────────────────────┘ │      │
+│  │                                │      │
+│  │ ┌──────────────┬─────────────┐ │      │ Two columns, gap: 8
+│  │ │ City *       │ State *     │ │      │
+│  │ │ ┌──────────┐ │ ┌─────────┐ │ │      │
+│  │ │ │ Mumbai   │ │ │ MH      │ │ │      │
+│  │ │ └──────────┘ │ └─────────┘ │ │      │
+│  │ └──────────────┴─────────────┘ │      │
+│  │                                │      │
+│  │ PIN Code *                     │      │
+│  │ ┌────────────────────────────┐ │      │
+│  │ │ 400001                     │ │      │
+│  │ └────────────────────────────┘ │      │
+│  └────────────────────────────────┘      │
+│                                          │
+│  ┌────────────────────────────────┐      │ Sticky bottom
+│  │       [ Continue to Payment ]  │      │ paddingHorizontal: 16
+│  └────────────────────────────────┘      │ SafeAreaView bottom
+└──────────────────────────────────────────┘
+```
+
+---
+
+## 💬 Real Chat/Messaging Screen
+
+> Chat screens **message-dense** hote hain — proper spacing, grouping, timestamps:
+
+### Chat Screen Layout
+```
+┌──────────────────────────────────────────┐ SafeAreaView
+│  ←  [Avatar] Deepak Sharma     [📞][⋮]  │ Header: paddingHorizontal: 16
+├──────────────────────────────────────────┤
+│                                          │
+│         ──── Today, 2:30 PM ────        │ Date divider: centered
+│                                          │
+│  ┌──────────────────────────────┐        │ padding: 12
+│  │ Hey! How's the project?     │        │ borderRadius: 16, borderBottomLeft: 4
+│  │                      2:31 PM │        │ Time: 11px, muted
+│  └──────────────────────────────┘        │ maxWidth: 75%
+│                                          │
+│       ┌──────────────────────────────┐   │ Self message: right-aligned
+│       │ Going great! Just finished   │   │ backgroundColor: primary
+│       │ the design system updates.   │   │ textColor: white
+│       │                     2:32 PM  │   │
+│       └──────────────────────────────┘   │
+│                                          │
+│  ┌──────────────────────────────┐        │
+│  │ That's awesome! Can you      │        │ Same sender, 2min = group
+│  │ share the latest mockups?    │        │ 4px gap within group
+│  │                      2:32 PM │        │
+│  └──────────────────────────────┘        │
+│                                          │
+│       ┌──────────────────────────────┐   │
+│       │ Sure, sending now...         │   │
+│       │                     2:33 PM  │   │
+│       └──────────────────────────────┘   │
+│       ┌──────────────────────────────┐   │
+│       │ 📎 design-v3-final.fig      │   │ Attachment: above text
+│       │                     2:33 PM  │   │
+│       └──────────────────────────────┘   │
+│                                          │
+│  ┌──┐                                   │ Typing indicator: with avatar
+│  │A │  ● ● ●                            │ 3 dots animated
+│  └──┘                                   │
+│                                          │
+├──────────────────────────────────────────┤
+│  ┌──────────────────────────────────┐    │ Composer: paddingHorizontal: 8
+│  │ [+]  Type a message...    [📤]  │    │ 44px height, grows to 5 lines
+│  └──────────────────────────────────┘    │ SafeAreaView bottom
+└──────────────────────────────────────────┘
+```
+
+---
+
+## 🔐 Real Auth Screens — Login, Signup, Forgot Password
+
+### Login Screen Layout
+```
+┌──────────────────────────────────────────┐ SafeAreaView
+│                                          │
+│            [App Logo 64px]               │ Centered, 48px top margin
+│                                          │
+│          Welcome Back!                   │ 24px, semibold, centered
+│    Sign in to continue to your account   │ 14px, muted, centered
+│                                          │
+│  ┌────────────────────────────────┐      │ paddingHorizontal: 16
+│  │                                │      │
+│  │ Email or Phone                 │      │ Label: outside
+│  │ ┌────────────────────────────┐ │      │
+│  │ │ 📧  deepak@email.com      │ │      │ Leading icon + input
+│  │ └────────────────────────────┘ │      │
+│  │                                │      │
+│  │ Password                       │      │
+│  │ ┌────────────────────────────┐ │      │
+│  │ │ 🔒  ••••••••          👁️ │ │      │ Trailing eye icon toggle
+│  │ └────────────────────────────┘ │      │
+│  │                                │      │
+│  │ Forgot Password?               │      │ Right-aligned link
+│  │                                │      │
+│  │ ┌────────────────────────────┐ │      │
+│  │ │       [ Sign In ]          │ │      │ Full-width button, 48px height
+│  │ └────────────────────────────┘ │      │
+│  │                                │      │
+│  │ ──── Or continue with ────    │      │ Divider with text
+│  │                                │      │
+│  │ [G] [f] [🍎]                  │      │ Social login buttons, gap: 12
+│  │                                │      │
+│  └────────────────────────────────┘      │
+│                                          │
+│  Don't have an account?  Sign Up         │ Bottom text: centered
+│                                          │
+└──────────────────────────────────────────┘
+```
+
+---
+
+## 📱 Tab Bar — Bottom Navigation
+
+> Real apps ka tab bar **not just icons** — ye poora navigation system hai:
+
+### Tab Bar Anatomy
+```
+┌──────────────────────────────────────────┐
+│  [🏠]    [🔍]    [🛒]    [👤]          │ height: 56px + safe area
+│  Home    Search   Cart    Profile        │ paddingHorizontal: 8
+│  ━━━━                                    │ Active: filled icon + primary color
+│  ●                                       │ Badge: top-right of icon
+└──────────────────────────────────────────┘
+```
+
+### Tab Bar Rules
+- **3–5 tabs maximum** — zyada tabs = decision paralysis.
+- **Active tab**: filled icon + primary color + semibold label.
+- **Inactive tab**: outline icon + muted color + regular label.
+- **Badge position**: top-right corner of icon, **red background, white text.**
+- **Tab label**: 10px, single word preferred.
+- **Safe area**: bottom safe area automatically handled.
+- **Translucent background**: `backgroundColor: 'rgba(255,255,255,0.95)'` with `backdrop-filter: blur(20px)`.
+- **Top border**: `borderTopWidth: 0.5, borderTopColor: 'rgba(0,0,0,0.1)'`.
+
+---
+
+## 🎭 Theming & Dark Mode — Real Implementation
+
+### Theme Token System
+```javascript
+const theme = {
+  colors: {
+    // Backgrounds
+    bg: {
+      primary: '#FFFFFF',      // Main background
+      secondary: '#F5F5F5',    // Card/section background
+      tertiary: '#EBEBEB',     // Elevated surfaces
+    },
+    // Text
+    text: {
+      primary: '#1A1A1A',      // Headlines, primary content
+      secondary: '#666666',    // Subtitles, descriptions
+      muted: '#999999',        // Timestamps, placeholders
+      inverse: '#FFFFFF',      // Text on dark/colored backgrounds
+    },
+    // Brand
+    brand: {
+      primary: '#6366F1',      // Primary actions, links
+      secondary: '#8B5CF6',    // Secondary actions
+      light: '#EEF2FF',        // Light tint backgrounds
+    },
+    // Semantic
+    semantic: {
+      success: '#10B981',      // Success states, confirmations
+      warning: '#F59E0B',      // Warning states, caution
+      error: '#EF4444',        // Error states, destructive
+      info: '#3B82F6',         // Informational states
+    },
+    // Borders & Dividers
+    border: {
+      default: 'rgba(0,0,0,0.08)',
+      strong: 'rgba(0,0,0,0.15)',
+      divider: 'rgba(0,0,0,0.06)',
+    }
+  },
+  dark: {
+    // Same structure, dark values
+    bg: {
+      primary: '#121212',
+      secondary: '#1E1E1E',
+      tertiary: '#2C2C2C',
+    },
+    text: {
+      primary: '#E5E5E5',
+      secondary: '#A0A0A0',
+      muted: '#6B6B6B',
+      inverse: '#121212',
+    },
+    border: {
+      default: 'rgba(255,255,255,0.08)',
+      strong: 'rgba(255,255,255,0.15)',
+      divider: 'rgba(255,255,255,0.06)',
+    }
+  }
+};
+```
+
+### Dark Mode Specific Rules
+- **Har color ka dark variant hona chahiye** — sirf invert mat karo.
+- **Elevation = lightness** — upar ki surface lighter.
+- **Text opacity**: Primary 87%, Secondary 60%, Disabled 38%.
+- **Images**: brightness 90% in dark mode — **100% brightness glare karta hai.**
+- **Dividers**: `rgba(255,255,255,0.08)` — alpha-based, not fixed gray.
+
+---
+
